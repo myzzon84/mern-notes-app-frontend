@@ -10,6 +10,19 @@ const NoteCard = ({
     onDelete,
     onPinNote,
 }) => {
+    const formatMyTags = () => {
+        let myTags = '';
+        if (Array.isArray(tags) && tags.length > 0) {
+            tags.forEach((tag, i) => {
+                myTags += `#${tag}`;
+                if (i < tags.length - 1) {
+                    myTags += ' ';
+                }
+            });
+        }
+        return myTags;
+    };
+
     return (
         <div className=' border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out'>
             <div className='flex items-center justify-between'>
@@ -18,13 +31,17 @@ const NoteCard = ({
                     <span className=' text-xs text-slate-500'>{date}</span>
                 </div>
                 <MdOutlinePushPin
-                    className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300'}`}
+                    className={`icon-btn ${
+                        isPinned ? 'text-primary' : 'text-slate-300'
+                    }`}
                     onClick={onPinNote}
                 />
             </div>
-            <p className='text-xs text-slate-600 mt-2'>{content?.slice(0, 60)}</p>
+            <p className='text-xs text-slate-600 mt-2'>
+                {content?.slice(0, 60)}
+            </p>
             <div className='flex items-center justify-between mt-2'>
-                <div className=' text-xs text-slate-500'>{tags}</div>
+                <div className=' text-xs text-slate-500'>{formatMyTags()}</div>
                 <div className=' flex items-center gap-2'>
                     <MdCreate
                         className=' icon-btn hover:text-green-600'

@@ -1,10 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import PasswordInput from '../../components/input/PasswordInput';
 import { useForm } from 'react-hook-form';
 import InputErrorMessage from '../../components/InputErrorMessage.jsx';
+import { login } from '../../utils/requests.js';
 
 const Login = () => {
+
+    const navigate = useNavigate();
 
     const {
         register,
@@ -13,7 +16,13 @@ const Login = () => {
     } = useForm({ mode: 'all' });
 
     const handleLogin = async (data) => {
-        console.log(data);
+        try {
+            login(data)
+                .then(response => localStorage.setItem('token', response.data.accessToken))
+                .then(() => navigate('/dashboard'))
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (

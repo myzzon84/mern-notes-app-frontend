@@ -3,8 +3,12 @@ import { useForm } from 'react-hook-form';
 import PasswordInput from '../../components/input/PasswordInput.jsx';
 import InputErrorMessage from '../../components/InputErrorMessage.jsx';
 import { Link } from 'react-router-dom';
+import { registration } from '../../utils/requests.js';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+    const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
@@ -13,7 +17,13 @@ const SignUp = () => {
 
     const handleSignUp = (data) => {
         console.log(data);
-    }
+        registration(data)
+            .then((response) =>
+                localStorage.setItem('token', response.data.accessToken)
+            )
+            .then(() => navigate('/dashboard'))
+            .catch((err) => console.log(err));
+    };
 
     return (
         <>
@@ -26,14 +36,15 @@ const SignUp = () => {
                             type='text'
                             placeholder='Name'
                             className=' input-box'
-                            {...register('name', {
+                            {...register('fullName', {
                                 required: {
                                     value: true,
                                     message: 'Please enter your name',
                                 },
                                 minLength: {
                                     value: 4,
-                                    message: 'Name must be at least 4 characters'
+                                    message:
+                                        'Name must be at least 4 characters',
                                 },
                             })}
                         />
@@ -52,15 +63,37 @@ const SignUp = () => {
                                 },
                             })}
                         />
-                        <PasswordInput register={register}/>
-                        {
-                            (errors.name?.type === 'required' && <InputErrorMessage errorMessage={errors.name.message}/>) ||
-                            (errors.name?.type === 'minLength' && <InputErrorMessage errorMessage={errors.name.message}/>) ||
-                            (errors.email?.type === 'required' && <InputErrorMessage errorMessage={errors.email.message}/>) ||
-                            (errors.email?.type === 'pattern' && <InputErrorMessage errorMessage={errors.email.message}/>) ||
-                            (errors.password?.type === 'required' && <InputErrorMessage errorMessage={errors.password.message}/>) ||
-                            (errors.password?.type === 'minLength' && <InputErrorMessage errorMessage={errors.password.message}/>)
-                        }
+                        <PasswordInput register={register} />
+                        {(errors.name?.type === 'required' && (
+                            <InputErrorMessage
+                                errorMessage={errors.name.message}
+                            />
+                        )) ||
+                            (errors.name?.type === 'minLength' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.name.message}
+                                />
+                            )) ||
+                            (errors.email?.type === 'required' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.email.message}
+                                />
+                            )) ||
+                            (errors.email?.type === 'pattern' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.email.message}
+                                />
+                            )) ||
+                            (errors.password?.type === 'required' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.password.message}
+                                />
+                            )) ||
+                            (errors.password?.type === 'minLength' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.password.message}
+                                />
+                            ))}
                         <button
                             type='submit'
                             className='btn-primary'

@@ -3,22 +3,86 @@ import NoteCard from '../../components/Cards/NoteCard.jsx';
 import { MdAdd } from 'react-icons/md';
 import AddEditNotes from './AddEditNotes.jsx';
 import Modal from 'react-modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAllNotes, getUserInfo } from '../../utils/requests.js';
 
 Modal.setAppElement('#root');
 
 const Home = () => {
+    const [userInfo, setUserInfo] = useState(null);
+    const [allNotes, setAllNotes] = useState(null);
+
+    const navigate = useNavigate();
+
     const [openAddEditModal, setOpenAddEditModal] = useState({
         isShown: false,
         type: 'add',
         data: null,
     });
+
+    getUserInfo()
+        .then((response) => {
+            setUserInfo(response.data.user);
+        })
+        .catch((error) => {
+            console.log(error);
+            if (error.response.status === 401) {
+                localStorage.clear();
+                navigate('/login');
+            }
+        });
+
+    useEffect(() => {
+        getAllNotes().then((response) => {
+            console.log(response.data.notes);
+            setAllNotes(response.data.notes);
+        });
+    }, []);
+
+    useEffect(() => {
+        getUserInfo();
+    }, []);
+
     return (
         <>
-            <Navbar />
+            <Navbar userInfo={userInfo} />
             <div className=' container mx-auto'>
                 <div className='grid grid-cols-3 gap-4 mt-8'>
-                    <NoteCard
+                    {allNotes ? (
+                        allNotes.map((note, index) => {
+                            return (
+                                <NoteCard
+                                    key={index}
+                                    title={note.title}
+                                    date={new Date(
+                                        note.createdAt
+                                    ).toLocaleDateString('uk', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour:'numeric',
+                                        minute:'numeric'
+                                    })}
+                                    content={note.content}
+                                    tags={note.tags}
+                                    isPinned={true}
+                                    onEdit={() => {
+                                        setOpenAddEditModal({
+                                            isShown: true,
+                                            type: 'edit',
+                                            data: null,
+                                        });
+                                    }}
+                                    onDelete={() => {}}
+                                    onPinNote={() => {}}
+                                />
+                            );
+                        })
+                    ) : (
+                        <div>Loading....</div>
+                    )}
+                    {/* <NoteCard
                         title={'Meeting on 7th April'}
                         date={'3rd Apr 2024'}
                         content={'Meeting on 7th April'}
@@ -33,7 +97,7 @@ const Home = () => {
                         }}
                         onDelete={() => {}}
                         onPinNote={() => {}}
-                    />
+                    /> */}
                 </div>
             </div>
             <button
