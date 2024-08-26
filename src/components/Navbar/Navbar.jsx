@@ -2,14 +2,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import ProfileInfo from '../Cards/ProfileInfo.jsx';
 import SearchBar from '../SearchBar/SearchBar.jsx';
 import { useState } from 'react';
+import { appStore } from '../../store/appStore.js';
 
 const Navbar = ({userInfo}) => {
+
+    const setAllNotes = appStore(state => state.setAllNotes);
+
     const [searchQuery, setSearchQuery] = useState('');
 
     const navigate = useNavigate();
 
     const onLogout = () => {
         localStorage.clear();
+        setAllNotes(null);
         navigate('/login');
     };
 

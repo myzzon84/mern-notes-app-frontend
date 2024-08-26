@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MdAdd, MdClose } from 'react-icons/md';
 
-const TagInput = ({ tags, setTags, register }) => {
+const TagInput = ({ tags, setTags }) => {
     const [inputValue, setInputValue] = useState('');
 
     const handleInputChange = (e) => {
@@ -22,8 +22,8 @@ const TagInput = ({ tags, setTags, register }) => {
     };
 
     const handleRemoveTag = (tagToRemove) => {
-        setTags(tags.filter((tag) => tag !== tagToRemove))
-    }
+        setTags(tags.filter((tag) => tag !== tagToRemove));
+    };
 
     return (
         <div>
@@ -35,9 +35,12 @@ const TagInput = ({ tags, setTags, register }) => {
                             className='flex items-center gap-2 text-sm text-slate-900 bg-slate-100 px-3 py-1 rounded'
                         >
                             # {tag}
-                            <button onClick={() => {
-                                handleRemoveTag(tag);
-                            }}>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleRemoveTag(tag);
+                                }}
+                            >
                                 <MdClose />
                             </button>
                         </span>

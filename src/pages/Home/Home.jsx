@@ -6,20 +6,22 @@ import Modal from 'react-modal';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllNotes, getUserInfo } from '../../utils/requests.js';
+import { appStore } from '../../store/appStore.js';
+import { ToastContainer, Bounce, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 Modal.setAppElement('#root');
 
 const Home = () => {
+    const setIsShown = appStore((state) => state.setIsShown);
+    const isShown = appStore((state) => state.isShown);
+    const setTypeAddEdit = appStore((state) => state.setTypeAddEdit);
+    const allNotes = appStore((state) => state.allNotes);
+    const setAllNotes = appStore((state) => state.setAllNotes);
+
     const [userInfo, setUserInfo] = useState(null);
-    const [allNotes, setAllNotes] = useState(null);
 
     const navigate = useNavigate();
-
-    const [openAddEditModal, setOpenAddEditModal] = useState({
-        isShown: false,
-        type: 'add',
-        data: null,
-    });
 
     getUserInfo()
         .then((response) => {
@@ -34,10 +36,16 @@ const Home = () => {
         });
 
     useEffect(() => {
-        getAllNotes().then((response) => {
-            console.log(response.data.notes);
-            setAllNotes(response.data.notes);
-        });
+        getAllNotes()
+            .then((response) => {
+                console.log(response.data);
+                setAllNotes(response.data.notes);
+                toast.success(response.data.message);
+            })
+            .catch((err) => {
+                console.log(err);
+                toast.error('Internal server error!');
+            });
     }, []);
 
     useEffect(() => {
@@ -55,65 +63,32 @@ const Home = () => {
                                 <NoteCard
                                     key={index}
                                     title={note.title}
-                                    date={new Date(
-                                        note.createdAt
-                                    ).toLocaleDateString('uk', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                        hour:'numeric',
-                                        minute:'numeric'
-                                    })}
+                                    date={note.createdAt}
                                     content={note.content}
                                     tags={note.tags}
-                                    isPinned={true}
-                                    onEdit={() => {
-                                        setOpenAddEditModal({
-                                            isShown: true,
-                                            type: 'edit',
-                                            data: null,
-                                        });
-                                    }}
+                                    isPinned={note.isPinned}
                                     onDelete={() => {}}
                                     onPinNote={() => {}}
+                                    noteId={note._id}
                                 />
                             );
                         })
                     ) : (
                         <div>Loading....</div>
                     )}
-                    {/* <NoteCard
-                        title={'Meeting on 7th April'}
-                        date={'3rd Apr 2024'}
-                        content={'Meeting on 7th April'}
-                        tags={'#Meeting'}
-                        isPinned={true}
-                        onEdit={() => {
-                            setOpenAddEditModal({
-                                isShown: true,
-                                type: 'edit',
-                                data: null,
-                            });
-                        }}
-                        onDelete={() => {}}
-                        onPinNote={() => {}}
-                    /> */}
                 </div>
             </div>
             <button
                 className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10'
                 onClick={() => {
-                    setOpenAddEditModal({
-                        isShown: true,
-                        type: 'add',
-                        data: null,
-                    });
+                    setIsShown(true);
+                    setTypeAddEdit('add');
                 }}
             >
                 <MdAdd className='text-[32px] text-white' />
             </button>
             <Modal
-                isOpen={openAddEditModal.isShown}
+                isOpen={isShown}
                 onRequestClose={() => {}}
                 style={{
                     overlay: {
@@ -123,18 +98,21 @@ const Home = () => {
                 contentLabel=''
                 className='w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-auto'
             >
-                <AddEditNotes
-                    onClose={() => {
-                        setOpenAddEditModal({
-                            isShown: false,
-                            type: 'add',
-                            data: null,
-                        });
-                    }}
-                    type={openAddEditModal.type}
-                    noteData={openAddEditModal.data}
-                />
+                <AddEditNotes setAllNotes={setAllNotes} />
             </Modal>
+            <ToastContainer
+                position='bottom-right'
+                autoClose={3500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme='light'
+                transition={Bounce}
+            />
         </>
     );
 };

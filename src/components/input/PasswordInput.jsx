@@ -15,8 +15,8 @@ const PasswordInput = ({ register, placeholder }) => {
                         message: 'Please enter password',
                     },
                     minLength: {
-                        value: 5,
-                        message: 'Password must be at least 5 characters'
+                        value: 6,
+                        message: 'Password must be at least 6 characters'
                     }
                 })}
                 type={isShowPassword ? 'text' : 'password'}

@@ -15,3 +15,15 @@ export const registration = async (data) => {
 export const getAllNotes = async () => (
     await axiosInstance.get('/get-all-notes')
 )
+
+export const addNewNote = async (data) => {
+    return await axiosInstance.post('/add-note', data);
+}
+
+export const editNote = async (data) => {
+    return await axiosInstance.put(`edit-note/${data.id}`, data);
+}
+
+export const deleteNote = async (id) => {
+    return await axiosInstance.delete(`/delete-note/${id}`);
+}
