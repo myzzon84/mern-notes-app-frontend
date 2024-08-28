@@ -27,3 +27,7 @@ export const editNote = async (data) => {
 export const deleteNote = async (id) => {
     return await axiosInstance.delete(`/delete-note/${id}`);
 }
+
+export const searchNotes = async (query) => {
+    return await axiosInstance.get('/search-notes', {params: {query}});
+}

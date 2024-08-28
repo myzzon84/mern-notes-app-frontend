@@ -1,11 +1,12 @@
 import Navbar from '../../components/Navbar/Navbar.jsx';
 import NoteCard from '../../components/Cards/NoteCard.jsx';
+import EmptyCard from '../../components/EmptyCard/EmptyCard.jsx';
 import { MdAdd } from 'react-icons/md';
 import AddEditNotes from './AddEditNotes.jsx';
 import Modal from 'react-modal';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllNotes, getUserInfo } from '../../utils/requests.js';
+import { getAllNotes, getUserInfo, searchNotes } from '../../utils/requests.js';
 import { appStore } from '../../store/appStore.js';
 import { ToastContainer, Bounce, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -40,7 +41,11 @@ const Home = () => {
             .then((response) => {
                 console.log(response.data);
                 setAllNotes(response.data.notes);
-                toast.success(response.data.message);
+                if (response.data.notes.length > 0) {
+                    toast.success(response.data.message);
+                }else{
+                    toast.info('Notes not found. Create your first note.');
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -56,27 +61,31 @@ const Home = () => {
         <>
             <Navbar userInfo={userInfo} />
             <div className=' container mx-auto'>
-                <div className='grid grid-cols-3 gap-4 mt-8'>
-                    {allNotes ? (
-                        allNotes.map((note, index) => {
-                            return (
-                                <NoteCard
-                                    key={index}
-                                    title={note.title}
-                                    date={note.createdAt}
-                                    content={note.content}
-                                    tags={note.tags}
-                                    isPinned={note.isPinned}
-                                    onDelete={() => {}}
-                                    onPinNote={() => {}}
-                                    noteId={note._id}
-                                />
-                            );
-                        })
-                    ) : (
-                        <div>Loading....</div>
-                    )}
-                </div>
+                {allNotes?.length > 0 ? (
+                    <div className='grid grid-cols-3 gap-4 mt-8'>
+                        {allNotes ? (
+                            allNotes.map((note, index) => {
+                                return (
+                                    <NoteCard
+                                        key={index}
+                                        title={note.title}
+                                        date={note.createdAt}
+                                        content={note.content}
+                                        tags={note.tags}
+                                        isPinned={note.isPinned}
+                                        onDelete={() => {}}
+                                        onPinNote={() => {}}
+                                        noteId={note._id}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <div>Loading....</div>
+                        )}
+                    </div>
+                ) : (
+                    <EmptyCard />
+                )}
             </div>
             <button
                 className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10'
