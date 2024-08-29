@@ -24,7 +24,7 @@ const SearchBar = () => {
     };
 
     useEffect(() => {
-        if (!searchValue) {
+        if (!searchValue && localStorage.getItem('token')) {
             getAllNotes()
                 .then((response) => {
                     setAllNotes(response.data.notes);

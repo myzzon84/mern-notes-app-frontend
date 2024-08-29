@@ -19,6 +19,8 @@ const NoteCard = ({
     const setTypeAddEdit = appStore((state) => state.setTypeAddEdit);
     const allNotes = appStore((state) => state.allNotes);
     const setAllNotes = appStore((state) => state.setAllNotes);
+    const setTagFilteredNotes = appStore((state) => state.setTagFilteredNotes);
+    const setTagFilter = appStore((state) => state.setTagFilter);
 
     const [selectedTag, setSelectedTag] = useState('');
 
@@ -32,7 +34,8 @@ const NoteCard = ({
             });
             return temp === true;
         });
-        setAllNotes(filteredNotes);
+        setTagFilteredNotes(filteredNotes);
+        setTagFilter(true);
     };
 
     const formatMyTags = () => {
@@ -41,7 +44,7 @@ const NoteCard = ({
             myTags = tags.map((tag, i) => {
                 return (
                     <span
-                        className=' cursor-pointer'
+                        className=' cursor-pointer hover:font-bold'
                         key={i}
                         onClick={() => {
                             console.log(tag);

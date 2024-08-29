@@ -10,6 +10,12 @@ export const appStore = create((set) => ({
     setTypeAddEdit: (string) => set({typeAddEdit: string}),
     allNotes: null,
     setAllNotes: (notes) => set({allNotes: notes}),
+    tagFilteredNotes: null,
+    setTagFilteredNotes: (notes) => set({tagFilteredNotes: notes}),
+    tagFilter: false,
+    setTagFilter: (bool) => set({tagFilter: bool}),
+    loading: false,
+    setLoading: (bool) => set({loading: bool}),
 }));
 
 if (process.env.NODE_ENV === 'development') {
