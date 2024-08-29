@@ -3,6 +3,7 @@ import moment from 'moment';
 import { appStore } from '../../store/appStore.js';
 import { deleteNote, getAllNotes } from '../../utils/requests.js';
 import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
 const NoteCard = ({
     title,
@@ -13,32 +14,62 @@ const NoteCard = ({
     onPinNote,
     noteId,
 }) => {
+    const setIdEditNote = appStore((state) => state.setIdEditNote);
+    const setIsShown = appStore((state) => state.setIsShown);
+    const setTypeAddEdit = appStore((state) => state.setTypeAddEdit);
+    const allNotes = appStore((state) => state.allNotes);
+    const setAllNotes = appStore((state) => state.setAllNotes);
 
-    const setIdEditNote = appStore(state => state.setIdEditNote);
-    const setIsShown = appStore(state => state.setIsShown);
-    const setTypeAddEdit = appStore(state => state.setTypeAddEdit);
-    const allNotes = appStore(state => state.allNotes);
-    const setAllNotes = appStore(state => state.setAllNotes);
+    const [selectedTag, setSelectedTag] = useState('');
+
+    const filterOnTag = () => {
+        let filteredNotes = allNotes.filter((note, i) => {
+            let temp = false;
+            note.tags.forEach((tag) => {
+                if (tag === selectedTag) {
+                    temp = true;
+                }
+            });
+            return temp === true;
+        });
+        setAllNotes(filteredNotes);
+    };
 
     const formatMyTags = () => {
-        let myTags = '';
+        let myTags;
         if (Array.isArray(tags) && tags.length > 0) {
-            tags.forEach((tag, i) => {
-                myTags += `#${tag}`;
-                if (i < tags.length - 1) {
-                    myTags += ' ';
-                }
+            myTags = tags.map((tag, i) => {
+                return (
+                    <span
+                        className=' cursor-pointer'
+                        key={i}
+                        onClick={() => {
+                            console.log(tag);
+                            setSelectedTag(tag);
+                        }}
+                    >
+                        {`#${tag} `}
+                    </span>
+                );
             });
         }
         return myTags;
     };
+
+    useEffect(() => {
+        if (selectedTag) {
+            filterOnTag();
+        }
+    }, [selectedTag]);
 
     return (
         <div className=' border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out overflow-hidden'>
             <div className='flex items-center justify-between'>
                 <div>
                     <h6 className=' text-sm font-medium'>{title}</h6>
-                    <span className=' text-xs text-slate-500'>{moment(date).format('Do MMM YYYY')}</span>
+                    <span className=' text-xs text-slate-500'>
+                        {moment(date).format('Do MMM YYYY')}
+                    </span>
                 </div>
                 <MdOutlinePushPin
                     className={`icon-btn ${
@@ -59,7 +90,7 @@ const NoteCard = ({
                             setIsShown(true);
                             setTypeAddEdit('edit');
                             let editedNote;
-                            editedNote = allNotes.filter(note => {
+                            editedNote = allNotes.filter((note) => {
                                 return note._id === noteId;
                             });
                             setIdEditNote(editedNote[0]);
@@ -74,13 +105,13 @@ const NoteCard = ({
                                         .then((response) => {
                                             setAllNotes(response.data.notes);
                                         })
-                                        .catch(err => console.log(err))
+                                        .catch((err) => console.log(err));
                                     return response;
                                 })
                                 .then((response) => {
                                     toast.success(response.data.message);
                                 })
-                                .catch(err => console.log(err));
+                                .catch((err) => console.log(err));
                         }}
                     />
                 </div>
