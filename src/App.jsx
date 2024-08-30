@@ -11,6 +11,8 @@ function App() {
     useEffect(() => {
         if (!localStorage.getItem('token')) {
             navigate('/login');
+        }else{
+            navigate('/dashboard');
         }
     }, []);
 

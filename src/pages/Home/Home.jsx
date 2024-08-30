@@ -31,20 +31,6 @@ const Home = () => {
 
     const navigate = useNavigate();
 
-    if (localStorage.getItem('token')) {
-        getUserInfo()
-            .then((response) => {
-                setUserInfo(response.data.user);
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response.status === 401) {
-                    localStorage.clear();
-                    navigate('/login');
-                }
-            });
-    }
-
     useEffect(() => {
         if (localStorage.getItem('token')) {
             setLoading(true);
@@ -68,10 +54,6 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        getUserInfo();
-    }, []);
-
-    useEffect(() => {
         if (tagFilter) {
             setNotes(tagFilteredNotes);
         }
@@ -80,6 +62,25 @@ const Home = () => {
     useEffect(() => {
         setNotes(allNotes);
     }, [allNotes]);
+
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            getUserInfo()
+                .then((response) => {
+                    setUserInfo(response.data.user);
+                    navigate('/dashboard');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    if (error.response.status === 401) {
+                        localStorage.clear();
+                        navigate('/login');
+                    }
+                });
+        } else {
+            navigate('/login');
+        }
+    }, []);
 
     return (
         <>
@@ -121,7 +122,9 @@ const Home = () => {
             </button>
             <Modal
                 isOpen={isShown}
-                onRequestClose={() => {setIsShown(false)}}
+                onRequestClose={() => {
+                    setIsShown(false);
+                }}
                 style={{
                     overlay: {
                         backgroundColor: 'rgba(0,0,0,0.2)',
@@ -157,13 +160,14 @@ const Home = () => {
                     Reset tag filter
                 </div>
             )}
-            {
-                loading && (
-                    <div className=' absolute top-0 left-0 w-full h-full flex justify-center items-center bg-[rgba(0,0,0,.6)]'>
-                        <img src={spinnerImage} alt="spinner" />
-                    </div>
-                )
-            }
+            {loading && (
+                <div className=' absolute top-0 left-0 w-full h-full flex justify-center items-center bg-[rgba(0,0,0,.6)]'>
+                    <img
+                        src={spinnerImage}
+                        alt='spinner'
+                    />
+                </div>
+            )}
         </>
     );
 };
