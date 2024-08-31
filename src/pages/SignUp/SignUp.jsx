@@ -5,8 +5,11 @@ import InputErrorMessage from '../../components/InputErrorMessage.jsx';
 import { Link } from 'react-router-dom';
 import { registration } from '../../utils/requests.js';
 import { useNavigate } from 'react-router-dom';
+import { appStore } from '../../store/appStore.js';
 
 const SignUp = () => {
+    const setLoading = appStore((state) => state.setLoading);
+
     const navigate = useNavigate();
 
     const {
@@ -17,12 +20,14 @@ const SignUp = () => {
 
     const handleSignUp = (data) => {
         console.log(data);
+        setLoading(true);
         registration(data)
-            .then((response) =>
-                localStorage.setItem('token', response.data.accessToken)
-            )
+            .then((response) => {
+                localStorage.setItem('token', response.data.accessToken);
+                setLoading(false)
+            })
             .then(() => navigate('/dashboard'))
-            .catch((err) => console.log(err));
+            .catch((err) => {console.log(err); setLoading(false)});
     };
 
     return (

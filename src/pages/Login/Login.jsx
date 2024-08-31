@@ -4,8 +4,10 @@ import PasswordInput from '../../components/input/PasswordInput';
 import { useForm } from 'react-hook-form';
 import InputErrorMessage from '../../components/InputErrorMessage.jsx';
 import { login } from '../../utils/requests.js';
+import { appStore } from '../../store/appStore.js';
 
 const Login = () => {
+    const setLoading = appStore((state) => state.setLoading);
 
     const navigate = useNavigate();
 
@@ -17,11 +19,16 @@ const Login = () => {
 
     const handleLogin = async (data) => {
         try {
+            setLoading(true);
             login(data)
-                .then(response => localStorage.setItem('token', response.data.accessToken))
-                .then(() => navigate('/dashboard'))
+                .then((response) => {
+                    localStorage.setItem('token', response.data.accessToken);
+                    setLoading(false);
+                })
+                .then(() => navigate('/dashboard'));
         } catch (error) {
             console.log(error);
+            setLoading(false);
         }
     };
 
@@ -48,13 +55,27 @@ const Login = () => {
                                 },
                             })}
                         />
-                        <PasswordInput register={register}/>
-                        {
-                            (errors.email?.type === 'required' && <InputErrorMessage errorMessage={errors.email.message}/>) ||
-                            (errors.email?.type === 'pattern' && <InputErrorMessage errorMessage={errors.email.message}/>) ||
-                            (errors.password?.type === 'required' && <InputErrorMessage errorMessage={errors.password.message}/>) ||
-                            (errors.password?.type === 'minLength' && <InputErrorMessage errorMessage={errors.password.message}/>)
-                        }
+                        <PasswordInput register={register} />
+                        {(errors.email?.type === 'required' && (
+                            <InputErrorMessage
+                                errorMessage={errors.email.message}
+                            />
+                        )) ||
+                            (errors.email?.type === 'pattern' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.email.message}
+                                />
+                            )) ||
+                            (errors.password?.type === 'required' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.password.message}
+                                />
+                            )) ||
+                            (errors.password?.type === 'minLength' && (
+                                <InputErrorMessage
+                                    errorMessage={errors.password.message}
+                                />
+                            ))}
                         <button
                             type='submit'
                             className='btn-primary'

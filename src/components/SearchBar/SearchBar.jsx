@@ -3,34 +3,43 @@ import { IoMdClose } from 'react-icons/io';
 import { appStore } from '../../store/appStore.js';
 import { searchNotes, getAllNotes } from '../../utils/requests.js';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 
 const SearchBar = () => {
 
     const [searchValue, setSearchValue] = useState('');
 
     const setAllNotes = appStore((state) => state.setAllNotes);
+    const setActiveSearch = appStore((state) => state.setActiveSearch);
+    const setLoading = appStore((state) => state.setLoading);
 
     const onSearchNotes = () => {
+        setLoading(true);
         searchNotes(searchValue)
             .then((response) => {
-                if (response.data.notes.length === 0) {
-                    toast.error('Notes not found');
-                } else {
-                    setAllNotes(response.data.notes);
-                }
+                setActiveSearch(true);
+                return response;
             })
-            .catch((error) => console.log(error));
+            .then((response) => {
+                setLoading(false);
+                setAllNotes(response.data.notes);
+            })
+            .catch((error) => {
+                console.log(error);
+                setLoading(false);
+            });
     };
 
     useEffect(() => {
         if (!searchValue && localStorage.getItem('token')) {
+            setLoading(true);
             getAllNotes()
                 .then((response) => {
                     setAllNotes(response.data.notes);
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.log(error);
+                    setLoading(false);
                 });
         }
     }, [searchValue]);
@@ -52,6 +61,7 @@ const SearchBar = () => {
                     className={`text-xl text-slate-500 cursor-pointer hover:text-black mr-3`}
                     onClick={() => {
                         setSearchValue('');
+                        setActiveSearch(false);
                     }}
                 />
             )}

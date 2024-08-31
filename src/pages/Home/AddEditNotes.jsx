@@ -14,6 +14,7 @@ const AddEditNotes = () => {
     const typeAddEdit = appStore((state) => state.typeAddEdit);
     const setTypeAddEdit = appStore((state) => state.setTypeAddEdit);
     const setAllNotes = appStore((state) => state.setAllNotes);
+    const setLoading = appStore((state) => state.setLoading);
 
     const {
         register,
@@ -36,6 +37,7 @@ const AddEditNotes = () => {
         console.log(data);
         if (typeAddEdit === 'edit') {
             data.id = idEditNote._id;
+            setLoading(true);
             editNote(data)
                 .then((response) => {
                     console.log(response);
@@ -48,13 +50,15 @@ const AddEditNotes = () => {
                 })
                 .then(() => {
                     getAllNotes()
-                        .then((notes) => setAllNotes(notes.data.notes))
-                        .catch((err) => console.log(err));
+                        .then((notes) => {setAllNotes(notes.data.notes); setLoading(false)})
+                        .catch((err) => {console.log(err); setLoading(false)});
                 })
                 .catch((err) => {
                     console.log(err);
+                    setLoading(false);
                 });
         } else {
+            setLoading(true);
             addNewNote(data)
                 .then((response) => {
                     console.log(response);
@@ -67,11 +71,12 @@ const AddEditNotes = () => {
                 })
                 .then(() => {
                     getAllNotes()
-                        .then((notes) => setAllNotes(notes.data.notes))
-                        .catch((err) => console.log(err));
+                        .then((notes) => {setAllNotes(notes.data.notes); setLoading(false)})
+                        .catch((err) => {console.log(err); setLoading(false)});
                 })
                 .catch((err) => {
                     console.log(err);
+                    setLoading(false);
                 });
         }
     };

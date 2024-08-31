@@ -21,6 +21,7 @@ const NoteCard = ({
     const setAllNotes = appStore((state) => state.setAllNotes);
     const setTagFilteredNotes = appStore((state) => state.setTagFilteredNotes);
     const setTagFilter = appStore((state) => state.setTagFilter);
+    const setLoading = appStore((state) => state.setLoading);
 
     const [selectedTag, setSelectedTag] = useState('');
 
@@ -102,19 +103,27 @@ const NoteCard = ({
                     <MdDelete
                         className='icon-btn hover:text-red-500'
                         onClick={() => {
+                            setLoading(true);
                             deleteNote(noteId)
                                 .then((response) => {
                                     getAllNotes()
                                         .then((response) => {
                                             setAllNotes(response.data.notes);
+                                            setLoading(false);
                                         })
-                                        .catch((err) => console.log(err));
+                                        .catch((err) => {
+                                            console.log(err);
+                                            setLoading(false);
+                                        });
                                     return response;
                                 })
                                 .then((response) => {
                                     toast.success(response.data.message);
                                 })
-                                .catch((err) => console.log(err));
+                                .catch((err) => {
+                                    console.log(err);
+                                    setLoading(false);
+                                });
                         }}
                     />
                 </div>

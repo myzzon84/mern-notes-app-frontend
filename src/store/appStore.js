@@ -16,6 +16,8 @@ export const appStore = create((set) => ({
     setTagFilter: (bool) => set({tagFilter: bool}),
     loading: false,
     setLoading: (bool) => set({loading: bool}),
+    activeSearch: false,
+    setActiveSearch: (bool) => set({activeSearch: bool}),
 }));
 
 if (process.env.NODE_ENV === 'development') {
