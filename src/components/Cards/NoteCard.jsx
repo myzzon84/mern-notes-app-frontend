@@ -1,7 +1,7 @@
 import { MdOutlinePushPin, MdCreate, MdDelete } from 'react-icons/md';
 import moment from 'moment';
 import { appStore } from '../../store/appStore.js';
-import { deleteNote, getAllNotes } from '../../utils/requests.js';
+import { deleteNote, getAllNotes, updateIsPinned } from '../../utils/requests.js';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +11,6 @@ const NoteCard = ({
     content,
     tags,
     isPinned,
-    onPinNote,
     noteId,
 }) => {
     const setIdEditNote = appStore((state) => state.setIdEditNote);
@@ -77,9 +76,32 @@ const NoteCard = ({
                 </div>
                 <MdOutlinePushPin
                     className={`icon-btn ${
-                        isPinned ? 'text-primary' : 'text-slate-300'
+                        isPinned ? 'text-primary rotate-45' : 'text-slate-300 rotate-0'
                     }`}
-                    onClick={onPinNote}
+                    onClick={() => {
+                        let noteData = {
+                            id: noteId,
+                            isPinned: isPinned,
+                        }
+                        setLoading(true);
+                        updateIsPinned(noteData)
+                            .then((isPinned) => {
+                                getAllNotes()
+                                    .then(response => {
+                                        setAllNotes(response.data.notes);
+                                        setLoading(false);
+                                        toast.success(isPinned.data.message);
+                                    })
+                                    .catch(error => {
+                                        setLoading(false);
+                                        console.log(error);
+                                    })
+                            })
+                            .catch(error => {
+                                setLoading(false);
+                                console.log(error);
+                            })
+                    }}
                 />
             </div>
             <p className='text-xs text-slate-600 mt-2'>

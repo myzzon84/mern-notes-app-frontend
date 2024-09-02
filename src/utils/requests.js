@@ -31,3 +31,7 @@ export const deleteNote = async (id) => {
 export const searchNotes = async (query) => {
     return await axiosInstance.get('/search-notes', {params: {query}});
 }
+
+export const updateIsPinned = async (note) => {
+    return await axiosInstance.put(`/update-note-pinned/${note.id}`, {isPinned: !note.isPinned});
+}
