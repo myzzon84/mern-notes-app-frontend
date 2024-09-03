@@ -1,2 +1,2 @@
 // export const BASE_URL = 'http://localhost:8000/';
-export const BASE_URL = 'mern-notes-app-backend.vercel.app';
+export const BASE_URL = 'https://mern-notes-app-backend-myzzon84.vercel.app';
