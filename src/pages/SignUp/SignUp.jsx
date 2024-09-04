@@ -69,14 +69,14 @@ const SignUp = () => {
                             })}
                         />
                         <PasswordInput register={register} />
-                        {(errors.name?.type === 'required' && (
+                        {(errors.fullName?.type === 'required' && (
                             <InputErrorMessage
-                                errorMessage={errors.name.message}
+                                errorMessage={errors.fullName.message}
                             />
                         )) ||
-                            (errors.name?.type === 'minLength' && (
+                            (errors.fullName?.type === 'minLength' && (
                                 <InputErrorMessage
-                                    errorMessage={errors.name.message}
+                                    errorMessage={errors.fullName.message}
                                 />
                             )) ||
                             (errors.email?.type === 'required' && (
