@@ -87,7 +87,9 @@ const Home = () => {
             <Navbar userInfo={userInfo} />
             <div className=' container mx-auto'>
                 {notes?.length > 0 ? (
-                    <div className='grid grid-cols-3 gap-4 mt-8'>
+                    <div
+                        className='grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8 px-5'
+                    >
                         {notes ? (
                             notes.map((note, index) => {
                                 return (
@@ -131,7 +133,7 @@ const Home = () => {
                     },
                 }}
                 contentLabel=''
-                className='w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-auto'
+                className='sm:w-[70%] w-[90%] xl:w-[50%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-auto'
                 shouldCloseOnOverlayClick={true}
             >
                 <AddEditNotes />
