@@ -12,6 +12,12 @@ const SearchBar = () => {
     const setActiveSearch = appStore((state) => state.setActiveSearch);
     const setLoading = appStore((state) => state.setLoading);
 
+    useEffect(() => {
+        if(!searchValue){
+            setActiveSearch(false);
+        }
+    },[searchValue]);
+
     const onSearchNotes = () => {
         setLoading(true);
         searchNotes(searchValue)
