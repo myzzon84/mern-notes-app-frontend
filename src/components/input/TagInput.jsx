@@ -22,7 +22,16 @@ const TagInput = ({ tags, setTags }) => {
     };
 
     const handleRemoveTag = (tagToRemove) => {
-        setTags(tags.filter((tag) => tag !== tagToRemove));
+        let newTags = JSON.parse(JSON.stringify(tags));
+        let filteredTags = newTags.filter((tag) => {
+            return tag !== tagToRemove;
+        });
+        if(filteredTags.length > 0){
+            setTags(filteredTags);
+        }else{
+            setTags([]);
+        }
+        // setTags(tags.filter((tag) => tag !== tagToRemove));
     };
 
     return (

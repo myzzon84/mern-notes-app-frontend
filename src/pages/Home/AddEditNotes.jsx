@@ -30,6 +30,10 @@ const AddEditNotes = () => {
 
     const [tags, setTags] = useState([]);
 
+    useEffect(() => {
+        console.log(tags);
+    },[tags]);
+
     const handleAddEditNotes = (data) => {
         if (tags.length > 0) {
             data.tags = tags;
@@ -37,6 +41,7 @@ const AddEditNotes = () => {
         console.log(data);
         if (typeAddEdit === 'edit') {
             data.id = idEditNote._id;
+            data.tags = tags;
             setLoading(true);
             editNote(data)
                 .then((response) => {
@@ -168,7 +173,6 @@ const AddEditNotes = () => {
                 <button
                     type='submit'
                     className=' btn-primary font-medium mt-5 p-3'
-                    onClick={() => {}}
                 >
                     {/* ADD */}
                     {typeAddEdit === 'add' ? 'ADD' : 'SAVE'}

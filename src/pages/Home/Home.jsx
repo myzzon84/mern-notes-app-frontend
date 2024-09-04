@@ -88,7 +88,7 @@ const Home = () => {
             <div className=' container mx-auto'>
                 {notes?.length > 0 ? (
                     <div
-                        className='grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8 px-5'
+                        className='grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-12 px-5'
                     >
                         {notes ? (
                             notes.map((note, index) => {
@@ -153,7 +153,7 @@ const Home = () => {
             />
             {tagFilter && (
                 <div
-                    className=' absolute top-[70px] right-[50px] cursor-pointer'
+                    className=' absolute top-[70px] right-[50px] cursor-pointer text-red-600'
                     onClick={() => {
                         setTagFilter(false);
                         setNotes(allNotes);

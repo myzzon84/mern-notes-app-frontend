@@ -20,9 +20,16 @@ const NoteCard = ({
     const setAllNotes = appStore((state) => state.setAllNotes);
     const setTagFilteredNotes = appStore((state) => state.setTagFilteredNotes);
     const setTagFilter = appStore((state) => state.setTagFilter);
+    const tagFilter = appStore((state) => state.tagFilter);
     const setLoading = appStore((state) => state.setLoading);
 
     const [selectedTag, setSelectedTag] = useState('');
+
+    useEffect(() => {
+        if(!tagFilter){
+            setSelectedTag('');
+        }
+    },[tagFilter])
 
     const filterOnTag = () => {
         let filteredNotes = allNotes.filter((note, i) => {
